@@ -6,8 +6,8 @@
  *     count: 0,
  *     add: () => set((s) => ({ count: s.count + 1 })),
  *   }));
- * The store renders its cached state instantly; `hydrated` flips to true once storage has been read,
- * so screens can show a skeleton only on the true first load.
+ * The first render shows the initial values; `hydrated` flips to true once the saved values have been
+ * read from disk (a few milliseconds), so a screen can show a skeleton until then instead of a flash of empty.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create, type StateCreator } from 'zustand';

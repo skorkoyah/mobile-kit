@@ -24,7 +24,7 @@ Change a sentence in `app/index.tsx`, save, and watch the phone. That is hot rel
 npx create-expo-app day-07-flash --template https://github.com/skorkoyah/mobile-kit/tree/v0
 ```
 
-(or `git clone --branch v0 … && npm install`). Keep the bundle ID and package name as the Kit's shared phase identifier unless this is a submission app; see `KIT-CONTEXT.md` for the block you paste into your AI session.
+(or `git clone --branch v0 … && npm install`). **Your identifier:** on Day 0, replace `yourname` in `com.yourname.kit` with your own name, once. Every daily app keeps that identifier; only submission apps get their own. See `KIT-CONTEXT.md` for the block you paste into your AI session.
 
 ## What's inside
 
@@ -33,13 +33,14 @@ npx create-expo-app day-07-flash --template https://github.com/skorkoyah/mobile-
 | `app/_layout.tsx` | The provider tree every app shares: gestures → keyboard → navigation. |
 | `app/index.tsx` | The welcome screen (the hot-reload test). Replace it with your app's first screen. |
 | `app/gallery.tsx` | A living style guide: one of every primitive, in both themes. |
-| `components/ui/` | The primitives: `Screen`, `T` (text), `Button`, `Row`, `Card`, `Press`, `Skeleton`, `EmptyState`, `ErrorBanner`, `Sheet`. |
-| `constants/tokens.ts` | The one place the look is defined (colors, spacing, radius, type, motion). `tokens.cjs` mirrors it for Tailwind; `npm run tokens:check` proves they match. |
+| `components/ui/` | The primitives: `Screen`, `T` (text), `Button`, `Input`, `Row`, `Card`, `Press`, `Skeleton`, `EmptyState`, `ErrorBanner`, `Sheet`. |
+| `constants/tokens.cjs` + `tokens.ts` | The look, defined once: colors and radius in `tokens.cjs` (Tailwind and the CSS variables are generated from it by `npm run tokens:sync`), type/spacing/motion in `tokens.ts`. Colors are CSS variables, so every class is right in light and dark mode without `dark:` twins. |
 | `lib/haptics.ts` | The only file that talks to the haptics library. |
 | `lib/storage.ts` | `storage` (plain, AsyncStorage) and `secrets` (keychain, SecureStore). Tokens never go in `storage`. |
 | `lib/store.ts` | `createPersistedStore`: a Zustand store that saves to disk and reports when it has loaded. |
 | `lib/motion.ts` | The standard enter animation and the reduce-motion hook. |
-| `lib/theme.ts` | `useColors()` for the few places `className` can't reach (icon colors, native props). |
+| `lib/theme.ts` | `useColors()` for the few places `className` can't reach (icon colors, native props) and `useNavigationTheme()` for headers and tabs. |
+| `lib/nativewind.ts` | Teaches NativeWind about `Animated.View` and the keyboard-aware scroll view. |
 | `app.json` | Shared phase identifier, purpose strings, plugins. Submission apps rewrite this. |
 | `eas.json` | `development` / `preview` / `production` build profiles. |
 | `docs/DECISIONS.md` | Why each choice was made. |
@@ -48,17 +49,17 @@ npx create-expo-app day-07-flash --template https://github.com/skorkoyah/mobile-
 
 Every screen gets five things for free, and a screen isn't done until it has all five:
 
-1. **Keyboard never covers an input.** `Screen mode="form"` wraps a keyboard-aware scroll view.
+1. **Keyboard never covers an input.** `Screen mode="form"` wraps a keyboard-aware scroll view, `Input` is the field, and `Sheet` lifts itself above the keyboard.
 2. **Loading shows skeletons, not spinners.** `Skeleton` and `ListSkeleton`.
 3. **Empty screens guide the next step.** `EmptyState` with one action.
 4. **Every tap responds with spring physics and a light haptic.** `Press`, used by `Button` and `Row`.
 5. **Content enters with motion, and respects reduce-motion.** `Card`, `Sheet`, `enter()`.
 
-Plus: dark mode follows the phone, text scales with the user's font-size setting, every control has a screen-reader label.
+Plus: dark mode follows the phone, text scales with the user's font-size setting, headings announce as headings, and every control has a screen-reader label.
 
 ## Scripts
 
-`npm start` (dev client) · `npm run typecheck` · `npm run tokens:check` · `npm run doctor` · `npm run build:dev`
+`npm start` (dev client) · `npm run typecheck` (runs the token sync first) · `npm run tokens:sync` · `npm run doctor` · `npm run build:dev`
 
 ## Versions
 

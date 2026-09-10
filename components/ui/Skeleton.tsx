@@ -7,6 +7,7 @@ type Props = { width?: DimensionValue; height?: number; radius?: number; classNa
 
 /**
  * A grey block shaped like the content that is loading. Pulses 0.4 → 1 → 0.4 on the UI thread.
+ * Hidden from screen readers; the container that groups skeletons announces "Loading" once.
  * Compose screen-specific skeletons from several of these; never show a bare spinner.
  */
 export function Skeleton({ width = '100%', height = 16, radius = 8, className = '' }: Props) {
@@ -27,22 +28,23 @@ export function Skeleton({ width = '100%', height = 16, radius = 8, className = 
   return (
     <Animated.View
       style={[style, { width, height, borderRadius: radius }]}
-      className={`bg-skeleton dark:bg-d-skeleton ${className}`}
-      accessibilityLabel="Loading"
+      className={`bg-skeleton ${className}`}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
     />
   );
 }
 
-/** A ready-made list skeleton: N rows of title + subtitle. */
+/** A ready-made list skeleton: N rows of title + subtitle. Announces "Loading" once. */
 export function ListSkeleton({ rows = 5 }: { rows?: number }) {
   return (
-    <>
+    <View accessibilityLabel="Loading" accessibilityRole="progressbar" accessible>
       {Array.from({ length: rows }).map((_, i) => (
-        <View key={i} className="py-3 gap-2 border-b border-border dark:border-d-border">
+        <View key={i} className="py-3 gap-2 border-b border-border">
           <Skeleton width="60%" height={18} />
           <Skeleton width="40%" height={14} />
         </View>
       ))}
-    </>
+    </View>
   );
 }

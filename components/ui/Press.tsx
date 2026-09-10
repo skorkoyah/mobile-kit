@@ -3,6 +3,7 @@ import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from '
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { motion } from '@/constants/tokens';
 import { haptics } from '@/lib/haptics';
+import { useReducedMotion } from '@/lib/motion';
 
 type Props = Omit<PressableProps, 'style' | 'children'> & {
   children: ReactNode;
@@ -18,40 +19,29 @@ const spring = { damping: motion.press.damping, stiffness: motion.press.stiffnes
 
 /**
  * The one pressable in the Kit. Every button, row, and card uses it, so every tap in every app
- * responds with the same spring physics and the same light haptic. Built on Reanimated: the
- * animation runs on the UI thread, so it stays smooth even while JavaScript is busy.
+ * responds with the same spring physics and the same light haptic. The animation runs on the UI
+ * thread (Reanimated), so it stays smooth even while JavaScript is busy. Under reduce-motion the
+ * press still gives feedback, without the spring.
  */
 export function Press({ children, feedback = 'scale', haptic = true, onPressIn, onPressOut, onPress, style, className, ...rest }: Props) {
   const pressed = useSharedValue(0);
+  const reduced = useReducedMotion();
 
   const animatedStyle = useAnimatedStyle(() => {
-    if (feedback === 'opacity') {
-      return { opacity: 1 - pressed.value * (1 - motion.press.activeOpacity) };
-    }
+    if (feedback === 'opacity') return { opacity: 1 - pressed.value * (1 - motion.press.activeOpacity) };
     return { transform: [{ scale: 1 - pressed.value * (1 - motion.press.minScale) }] };
   });
 
-  const handleIn: PressableProps['onPressIn'] = useCallback(
-    (e: Parameters<NonNullable<PressableProps['onPressIn']>>[0]) => {
-      pressed.value = withSpring(1, spring);
-      onPressIn?.(e);
+  const setPressed = useCallback(
+    (to: number) => {
+      pressed.value = reduced ? to : withSpring(to, spring);
     },
-    [onPressIn, pressed],
+    [pressed, reduced],
   );
-  const handleOut: PressableProps['onPressOut'] = useCallback(
-    (e: Parameters<NonNullable<PressableProps['onPressOut']>>[0]) => {
-      pressed.value = withSpring(0, spring);
-      onPressOut?.(e);
-    },
-    [onPressOut, pressed],
-  );
-  const handlePress: PressableProps['onPress'] = useCallback(
-    (e: Parameters<NonNullable<PressableProps['onPress']>>[0]) => {
-      if (haptic) haptics.tap();
-      onPress?.(e);
-    },
-    [haptic, onPress],
-  );
+
+  const handleIn = useCallback<NonNullable<PressableProps['onPressIn']>>((e) => { setPressed(1); onPressIn?.(e); }, [onPressIn, setPressed]);
+  const handleOut = useCallback<NonNullable<PressableProps['onPressOut']>>((e) => { setPressed(0); onPressOut?.(e); }, [onPressOut, setPressed]);
+  const handlePress = useCallback<NonNullable<PressableProps['onPress']>>((e) => { if (haptic) haptics.tap(); onPress?.(e); }, [haptic, onPress]);
 
   return (
     <Pressable onPressIn={handleIn} onPressOut={handleOut} onPress={handlePress} {...rest}>

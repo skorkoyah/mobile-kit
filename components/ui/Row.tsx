@@ -15,7 +15,7 @@ type Props = {
 /** A list row: title, optional subtitle, optional left/right slots. Tappable when `onPress` is given. */
 export function Row({ title, subtitle, left, right, onPress, accessibilityHint }: Props) {
   const body = (
-    <View className="flex-row items-center gap-3 py-3 px-1 border-b border-border dark:border-d-border">
+    <View className="flex-row items-center gap-3 py-3 px-1 min-h-[48px] border-b border-border">
       {left}
       <View className="flex-1">
         <T variant="body" className="font-semibold">{title}</T>
@@ -26,7 +26,7 @@ export function Row({ title, subtitle, left, right, onPress, accessibilityHint }
   );
   if (!onPress) return body;
   return (
-    <Press onPress={onPress} accessibilityRole="button" accessibilityLabel={title} accessibilityHint={accessibilityHint}>
+    <Press onPress={onPress} accessibilityRole="button" accessibilityLabel={subtitle ? `${title}, ${subtitle}` : title} accessibilityHint={accessibilityHint}>
       {body}
     </Press>
   );

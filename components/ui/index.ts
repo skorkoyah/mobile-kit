@@ -2,6 +2,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export { EmptyState } from './EmptyState';
 export { ErrorBanner } from './ErrorBanner';
+export { Input } from './Input';
 export { Press } from './Press';
 export { Row } from './Row';
 export { Screen } from './Screen';

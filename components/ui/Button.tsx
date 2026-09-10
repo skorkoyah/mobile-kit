@@ -14,10 +14,10 @@ type Props = {
 };
 
 const shells = {
-  primary: 'bg-accent dark:bg-d-accent',
-  secondary: 'bg-accent-soft dark:bg-d-accent-soft',
-  ghost: 'bg-transparent border border-border dark:border-d-border',
-  danger: 'bg-danger-soft dark:bg-d-danger-soft',
+  primary: 'bg-accent',
+  secondary: 'bg-accent-soft',
+  ghost: 'bg-transparent border border-border',
+  danger: 'bg-danger-soft',
 };
 const labels = { primary: 'onAccent', secondary: 'accent', ghost: 'ink', danger: 'danger' } as const;
 
@@ -37,7 +37,7 @@ export function Button({ title, onPress, variant = 'primary', disabled, loading,
     >
       <View className={`min-h-[52px] rounded-md px-5 items-center justify-center ${shells[variant]} ${className}`}>
         {loading ? (
-          <ActivityIndicator color={variant === 'primary' ? '#fff' : colors.accent} />
+          <ActivityIndicator color={variant === 'primary' ? colors.onAccent : colors.accent} />
         ) : (
           <T variant="body" tone={labels[variant]} className="font-semibold">{title}</T>
         )}

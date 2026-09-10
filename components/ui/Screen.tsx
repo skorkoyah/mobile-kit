@@ -14,7 +14,7 @@ type Props = {
 export function Screen({ children, mode = 'fixed', className = '' }: Props) {
   const inner = `px-4 pb-8 ${className}`;
   return (
-    <SafeAreaView className="flex-1 bg-background dark:bg-d-background" edges={['top', 'left', 'right']}>
+    <SafeAreaView className="flex-1 bg-background" edges={mode === 'fixed' ? ['top', 'left', 'right', 'bottom'] : ['top', 'left', 'right']}>
       {mode === 'fixed' && <View className={`flex-1 ${inner}`}>{children}</View>}
       {mode === 'scroll' && (
         <ScrollView contentContainerClassName={inner} keyboardShouldPersistTaps="handled">

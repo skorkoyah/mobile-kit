@@ -1,28 +1,42 @@
 import { Text as RNText, type TextProps } from 'react-native';
+import { type } from '@/constants/tokens';
 
-type Variant = 'display' | 'title' | 'heading' | 'body' | 'small' | 'caption';
+type Variant = keyof typeof type;
 
-const variants: Record<Variant, string> = {
-  display: 'text-[34px] leading-[40px] font-extrabold tracking-tight',
-  title: 'text-[26px] leading-[32px] font-bold',
-  heading: 'text-[20px] leading-[26px] font-semibold',
-  body: 'text-[17px] leading-[24px]',
-  small: 'text-[15px] leading-[21px]',
-  caption: 'text-[13px] leading-[18px] uppercase tracking-wider font-semibold',
+const weights: Record<Variant, string> = {
+  display: 'font-extrabold tracking-tight',
+  title: 'font-bold',
+  heading: 'font-semibold',
+  body: '',
+  small: '',
+  caption: 'uppercase tracking-wider font-semibold',
 };
 
 const tones = {
-  ink: 'text-ink dark:text-d-ink',
-  ink2: 'text-ink2 dark:text-d-ink2',
-  muted: 'text-muted dark:text-d-muted',
-  accent: 'text-accent-ink dark:text-d-accent-ink',
-  danger: 'text-danger dark:text-d-danger',
-  onAccent: 'text-white',
+  ink: 'text-ink',
+  ink2: 'text-ink2',
+  muted: 'text-muted',
+  accent: 'text-accent-ink',
+  danger: 'text-danger',
+  onAccent: 'text-on-accent',
 };
 
 export type TProps = TextProps & { variant?: Variant; tone?: keyof typeof tones; className?: string };
 
-/** Themed text. Respects the user's Dynamic Type / font size setting (never disable allowFontScaling). */
-export function T({ variant = 'body', tone = 'ink', className = '', ...rest }: TProps) {
-  return <RNText className={`${variants[variant]} ${tones[tone]} ${className}`} maxFontSizeMultiplier={1.6} {...rest} />;
+/**
+ * Themed text. Sizes come from tokens; colors are CSS variables, so they are right in both themes.
+ * Scales with the user's font-size setting (never disable allowFontScaling); display/title/heading
+ * announce as headings to screen readers.
+ */
+export function T({ variant = 'body', tone = 'ink', className = '', style, ...rest }: TProps) {
+  const isHeading = variant === 'display' || variant === 'title' || variant === 'heading';
+  return (
+    <RNText
+      accessibilityRole={isHeading ? 'header' : undefined}
+      maxFontSizeMultiplier={1.6}
+      className={`${weights[variant]} ${tones[tone]} ${className}`}
+      style={[{ fontSize: type[variant].size, lineHeight: type[variant].line }, style]}
+      {...rest}
+    />
+  );
 }

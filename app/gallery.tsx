@@ -1,17 +1,16 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { TextInput, View } from 'react-native';
-import { Button, Card, EmptyState, ErrorBanner, ListSkeleton, Row, Screen, Sheet, T } from '@/components/ui';
+import { View } from 'react-native';
+import { Button, Card, EmptyState, ErrorBanner, Input, ListSkeleton, Row, Screen, Sheet, T } from '@/components/ui';
 import { haptics } from '@/lib/haptics';
-import { useColors } from '@/lib/theme';
 
 /** A living style guide: one of every primitive, in both themes. Day 1's tour walks through this screen. */
 export default function Gallery() {
   const router = useRouter();
-  const colors = useColors();
   const [sheet, setSheet] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [text, setText] = useState('');
+  const [name, setName] = useState('');
+  const [note, setNote] = useState('');
 
   return (
     <Screen mode="form" className="pt-4 gap-5">
@@ -36,16 +35,10 @@ export default function Gallery() {
         <Button title="Loading" loading onPress={() => {}} />
       </Card>
 
-      <Card index={2}>
-        <T variant="caption" tone="muted" className="mb-2">Keyboard-aware input</T>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          placeholder="Type here; the keyboard never covers this field"
-          placeholderTextColor={colors.muted}
-          className="min-h-[48px] rounded-md px-4 border border-border dark:border-d-border text-ink dark:text-d-ink bg-background dark:bg-d-background"
-          accessibilityLabel="Example text field"
-        />
+      <Card index={2} className="gap-3">
+        <T variant="caption" tone="muted">Inputs (keyboard never covers them)</T>
+        <Input label="Your name" value={name} onChangeText={setName} placeholder="Ada" hint="Shown on your profile." autoCapitalize="words" />
+        <Input label="A note" value={note} onChangeText={setNote} placeholder="Type to clear the error" error={note ? undefined : 'A note is required.'} />
       </Card>
 
       <Card index={3}>
@@ -67,7 +60,7 @@ export default function Gallery() {
       </Card>
 
       <Sheet visible={sheet} onClose={() => setSheet(false)} title="A bottom sheet">
-        <T variant="body" tone="ink2" className="mb-4">Slides up with a spring, respects reduce-motion, closes on tap outside.</T>
+        <T variant="body" tone="ink2" className="mb-4">Slides up with a spring, respects reduce-motion, closes on tap outside, and keeps inputs above the keyboard.</T>
         <Button title="Done" onPress={() => { haptics.success(); setSheet(false); }} />
       </Sheet>
     </Screen>

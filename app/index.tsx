@@ -1,6 +1,5 @@
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
 import { Button, Card, Screen, T } from '@/components/ui';
 import { haptics } from '@/lib/haptics';
 
@@ -9,6 +8,7 @@ import { haptics } from '@/lib/haptics';
  * Every daily app replaces this file with its own first screen.
  */
 export default function Welcome() {
+  const router = useRouter();
   const [taps, setTaps] = useState(0);
   return (
     <Screen mode="scroll" className="pt-6 gap-4">
@@ -36,13 +36,9 @@ export default function Welcome() {
       <Card index={2}>
         <T variant="heading">Everything the Kit ships</T>
         <T variant="small" tone="ink2" className="mb-3">
-          Buttons, rows, cards, skeletons, empty states, error banners, sheets, and themed text.
+          Buttons, inputs, rows, cards, skeletons, empty states, error banners, sheets, and themed text.
         </T>
-        <Link href="/gallery" asChild>
-          <View>
-            <Button title="Open the gallery" variant="secondary" onPress={() => {}} />
-          </View>
-        </Link>
+        <Button title="Open the gallery" variant="secondary" onPress={() => router.push('/gallery')} />
       </Card>
     </Screen>
   );

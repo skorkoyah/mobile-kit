@@ -1,18 +1,17 @@
 /**
- * The only file that talks to the haptics library.
- * Screens call haptics.success() etc., never the library, so swapping
- * expo-haptics for react-native-pulsar is a one-file change.
+ * The only file that talks to the haptics library. Screens call haptics.success() etc., never the
+ * library, so changing the haptics engine later is a one-file change. Every `Press` calls haptics.tap().
  */
 import * as Haptics from 'expo-haptics';
 
 const safe = (fn: () => Promise<void>) => () => {
   fn().catch(() => {
-    /* haptics are best-effort: simulators and some Androids have none */
+    /* best-effort: simulators and some Androids have no haptics */
   });
 };
 
 export const haptics = {
-  /** Every button or row press. Wired globally through PressablesConfig too. */
+  /** Every button or row press (fired by Press). */
   tap: safe(() => Haptics.selectionAsync()),
   /** Toggle or option selected. */
   select: safe(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)),
