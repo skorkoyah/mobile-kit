@@ -14,6 +14,7 @@ Each entry: what we chose, and why. Newest at the bottom.
 - **`expo-haptics` behind `lib/haptics.ts`.** Simple, stable, and swappable in one file.
 - **Text never disables font scaling.** Dynamic Type is an accessibility promise; `maxFontSizeMultiplier` caps layout damage at 1.6×.
 - **`babel-preset-expo` is an explicit devDependency.** npm can nest it under `expo/` instead of hoisting it; a custom `babel.config.js` then fails at bundle time with an Expo Router error about `EXPO_ROUTER_APP_ROOT`. Installing it at the root fixes resolution for good.
+- **The Kit's EAS project ID is committed in `app.json`.** Every clone re-links with `eas init --force`, which is the standard flow for any cloned Expo repo; keeping the ID out of the file would force an `app.config.js` that `eas init` cannot edit for students.
 - **The welcome screen is the Day 0 hot-reload test** and the gallery is Day 1's tour, so the Kit teaches itself.
 
 ## Release ritual (submission days)

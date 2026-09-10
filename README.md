@@ -10,7 +10,7 @@ A development build is your own private version of this app, installed on your p
 
 ```bash
 npm install
-eas init                                   # links the project to your Expo account
+eas init --force                           # links the project to YOUR Expo account (replaces the Kit's project ID)
 eas device:create                          # iPhone only: registers your phone
 eas build --profile development --platform ios     # or android; 10–20 min in the cloud
 npx expo start --dev-client                # then scan the QR code with the phone camera
