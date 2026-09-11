@@ -5,6 +5,14 @@ import { motion } from '@/constants/tokens';
 import { haptics } from '@/lib/haptics';
 import { useReducedMotion } from '@/lib/motion';
 
+/**
+ * The touchable itself is the animated element, so `className` sets BOTH the layout of the real
+ * touch target and the thing that springs. `<Press className="flex-1">` really does make the whole
+ * area tappable — an earlier version put the class on an inner view, so the touch target quietly
+ * shrank to fit its content.
+ */
+export const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 type Props = Omit<PressableProps, 'style' | 'children'> & {
   children: ReactNode;
   /** 'scale' shrinks slightly (buttons, cards, rows); 'opacity' dims (icon and secondary actions). */
@@ -44,10 +52,15 @@ export function Press({ children, feedback = 'scale', haptic = true, onPressIn, 
   const handlePress = useCallback<NonNullable<PressableProps['onPress']>>((e) => { if (haptic) haptics.tap(); onPress?.(e); }, [haptic, onPress]);
 
   return (
-    <Pressable onPressIn={handleIn} onPressOut={handleOut} onPress={handlePress} {...rest}>
-      <Animated.View style={[animatedStyle, style]} className={className}>
-        {children}
-      </Animated.View>
-    </Pressable>
+    <AnimatedPressable
+      onPressIn={handleIn}
+      onPressOut={handleOut}
+      onPress={handlePress}
+      style={[animatedStyle, style]}
+      className={className}
+      {...rest}
+    >
+      {children}
+    </AnimatedPressable>
   );
 }

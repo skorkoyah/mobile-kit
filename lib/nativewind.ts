@@ -6,6 +6,8 @@
 import { cssInterop } from 'nativewind';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Animated from 'react-native-reanimated';
+import { AnimatedPressable } from '@/components/ui/Press';
 
 cssInterop(Animated.View, { className: 'style' });
+cssInterop(AnimatedPressable, { className: 'style' });
 cssInterop(KeyboardAwareScrollView, { className: 'style', contentContainerClassName: 'contentContainerStyle' });
