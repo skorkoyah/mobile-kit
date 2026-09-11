@@ -52,7 +52,7 @@ Every screen gets five things for free, and a screen isn't done until it has all
 1. **Keyboard never covers an input.** `Screen mode="form"` wraps a keyboard-aware scroll view, `Input` is the field, and `Sheet` lifts itself above the keyboard.
 2. **Loading shows skeletons, not spinners.** `Skeleton` and `ListSkeleton`.
 3. **Empty screens guide the next step.** `EmptyState` with one action.
-4. **Every tap responds with spring physics and a light haptic.** `Press`, used by `Button` and `Row`.
+4. **Every tap responds with spring physics and exactly one haptic.** `Press`, used by `Button` and `Row`. A button says which buzz it means (`haptic="confirm"`), and never fires two.
 5. **Content enters with motion, and respects reduce-motion.** `Card`, `Sheet`, `enter()`.
 
 Plus: dark mode follows the phone, text scales with the user's font-size setting, headings announce as headings, and every control has a screen-reader label.

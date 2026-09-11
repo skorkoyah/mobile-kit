@@ -1,7 +1,11 @@
 import { ActivityIndicator, View } from 'react-native';
 import { Press } from './Press';
 import { T } from './Text';
+import { haptics } from '@/lib/haptics';
 import { useColors } from '@/lib/theme';
+
+/** Which buzz this button means. `false` for none. Defaults to the light tap every press gets. */
+type HapticName = keyof typeof haptics;
 
 type Props = {
   title: string;
@@ -9,6 +13,8 @@ type Props = {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   disabled?: boolean;
   loading?: boolean;
+  /** 'tap' (default) · 'select' · 'confirm' · 'success' · 'error' · 'impact' · false for silent. */
+  haptic?: HapticName | false;
   accessibilityHint?: string;
   className?: string;
 };
@@ -21,13 +27,20 @@ const shells = {
 };
 const labels = { primary: 'onAccent', secondary: 'accent', ghost: 'ink', danger: 'danger' } as const;
 
-/** Every button in the Kit: spring press, light tap haptic, screen-reader role, 52pt minimum touch target. */
-export function Button({ title, onPress, variant = 'primary', disabled, loading, accessibilityHint, className = '' }: Props) {
+/**
+ * Every button in the Kit: spring press, screen-reader role, 52pt minimum touch target, and
+ * exactly ONE buzz per press — the button owns its haptic, so a caller never stacks a second one.
+ */
+export function Button({ title, onPress, variant = 'primary', disabled, loading, haptic = 'tap', accessibilityHint, className = '' }: Props) {
   const colors = useColors();
   const isOff = disabled || loading;
   return (
     <Press
-      onPress={onPress}
+      onPress={() => {
+        if (haptic) haptics[haptic]();
+        onPress();
+      }}
+      haptic={false}
       disabled={isOff}
       accessibilityRole="button"
       accessibilityLabel={title}

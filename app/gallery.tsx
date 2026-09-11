@@ -2,7 +2,6 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Card, EmptyState, ErrorBanner, Input, ListSkeleton, Row, Screen, Sheet, T } from '@/components/ui';
-import { haptics } from '@/lib/haptics';
 
 /** A living style guide: one of every primitive, in both themes. Day 1's tour walks through this screen. */
 export default function Gallery() {
@@ -27,11 +26,11 @@ export default function Gallery() {
       </Card>
 
       <Card index={1} className="gap-md">
-        <T variant="caption" tone="muted">Buttons</T>
-        <Button title="Primary" onPress={() => haptics.confirm()} />
-        <Button title="Secondary" variant="secondary" onPress={() => haptics.select()} />
+        <T variant="caption" tone="muted">Buttons — each owns its buzz</T>
+        <Button title="Primary" haptic="confirm" onPress={() => {}} />
+        <Button title="Secondary" variant="secondary" haptic="select" onPress={() => {}} />
         <Button title="Ghost" variant="ghost" onPress={() => {}} />
-        <Button title="Danger" variant="danger" onPress={() => haptics.error()} />
+        <Button title="Danger" variant="danger" haptic="error" onPress={() => {}} />
         <Button title="Loading" loading onPress={() => {}} />
       </Card>
 
@@ -51,7 +50,7 @@ export default function Gallery() {
 
       <Card index={4}>
         <T variant="caption" tone="muted" className="mb-sm">Error, recoverable</T>
-        <ErrorBanner onRetry={() => haptics.impact()} />
+        <ErrorBanner onRetry={() => {}} />
       </Card>
 
       <Card index={5} className="min-h-[260px]">
@@ -61,7 +60,7 @@ export default function Gallery() {
 
       <Sheet visible={sheet} onClose={() => setSheet(false)} title="A bottom sheet">
         <T variant="body" tone="ink2" className="mb-md">Slides up with a spring, respects reduce-motion, closes on tap outside, and keeps inputs above the keyboard.</T>
-        <Button title="Done" onPress={() => { haptics.success(); setSheet(false); }} />
+        <Button title="Done" haptic="success" onPress={() => setSheet(false)} />
       </Sheet>
     </Screen>
   );
