@@ -14,12 +14,12 @@ type Props = {
 /** A designed empty state: what this is, why it's empty, and the next step. */
 export function EmptyState({ icon = '✨', title, body, action }: Props) {
   return (
-    <View className="flex-1 items-center justify-center px-6 gap-3">
+    <View className="flex-1 items-center justify-center px-lg gap-md">
       <T variant="display" accessibilityElementsHidden importantForAccessibility="no" accessibilityRole={undefined}>{icon}</T>
       <T variant="heading" className="text-center">{title}</T>
       <T variant="body" tone="ink2" className="text-center max-w-[32ch]">{body}</T>
       {action ? (
-        <View className="mt-3 self-stretch">
+        <View className="mt-md self-stretch">
           <Button title={action.title} onPress={action.onPress} />
         </View>
       ) : null}

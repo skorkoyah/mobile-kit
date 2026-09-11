@@ -12,7 +12,7 @@ type Props = {
 
 /** The outer shell of every screen: safe area + themed background + the right scroll container. */
 export function Screen({ children, mode = 'fixed', className = '' }: Props) {
-  const inner = `px-4 pb-8 ${className}`;
+  const inner = `px-md pb-xl ${className}`;
   return (
     <SafeAreaView className="flex-1 bg-background" edges={mode === 'fixed' ? ['top', 'left', 'right', 'bottom'] : ['top', 'left', 'right']}>
       {mode === 'fixed' && <View className={`flex-1 ${inner}`}>{children}</View>}

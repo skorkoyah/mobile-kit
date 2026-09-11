@@ -1,5 +1,6 @@
-// THE source of truth for colors and radius. `npm run tokens:sync` regenerates global.css (CSS variables)
-// from this file and verifies constants/tokens.ts mirrors it. Change colors here, then run the sync.
+// THE source of truth for colors, radius, and spacing. `npm run tokens:sync` regenerates global.css
+// (CSS variables) from this file, feeds tailwind.config.js, and verifies constants/tokens.ts and
+// app.json still match. Change these values, then run the sync.
 module.exports = {
   palette: {
     light: {
@@ -14,4 +15,7 @@ module.exports = {
     },
   },
   radius: { sm: 8, md: 12, lg: 18, pill: 999 },
+  // The spacing scale, in points. Tailwind's numeric scale is replaced by these names, so `gap-md`
+  // and `px-md` are the only spacings the Kit uses and a change here moves every screen at once.
+  spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 },
 };

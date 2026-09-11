@@ -35,7 +35,7 @@ export function Button({ title, onPress, variant = 'primary', disabled, loading,
       accessibilityState={{ disabled: !!isOff, busy: !!loading }}
       style={{ opacity: isOff ? 0.6 : 1 }}
     >
-      <View className={`min-h-[52px] rounded-md px-5 items-center justify-center ${shells[variant]} ${className}`}>
+      <View className={`min-h-[52px] rounded-md px-lg items-center justify-center ${shells[variant]} ${className}`}>
         {loading ? (
           <ActivityIndicator color={variant === 'primary' ? colors.onAccent : colors.accent} />
         ) : (

@@ -11,7 +11,7 @@ export default function Welcome() {
   const router = useRouter();
   const [taps, setTaps] = useState(0);
   return (
-    <Screen mode="scroll" className="pt-6 gap-4">
+    <Screen mode="scroll" className="pt-lg gap-md">
       <T variant="caption" tone="muted">Mobile Kit · v0</T>
       <T variant="display">It works on your phone.</T>
       <T variant="body" tone="ink2">
@@ -20,7 +20,7 @@ export default function Welcome() {
 
       <Card index={1}>
         <T variant="heading">Feel the polish layer</T>
-        <T variant="small" tone="ink2" className="mb-3">
+        <T variant="small" tone="ink2" className="mb-md">
           Spring press, a light tap on every press, a success buzz every fifth tap.
         </T>
         <Button
@@ -35,7 +35,7 @@ export default function Welcome() {
 
       <Card index={2}>
         <T variant="heading">Everything the Kit ships</T>
-        <T variant="small" tone="ink2" className="mb-3">
+        <T variant="small" tone="ink2" className="mb-md">
           Buttons, inputs, rows, cards, skeletons, empty states, error banners, sheets, and themed text.
         </T>
         <Button title="Open the gallery" variant="secondary" onPress={() => router.push('/gallery')} />

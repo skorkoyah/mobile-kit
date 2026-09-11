@@ -20,6 +20,7 @@ export type ColorName = keyof typeof palette.light;
 
 export const radius = { sm: 8, md: 12, lg: 18, pill: 999 } as const;
 
+/** Spacing scale in points, mirrored from tokens.cjs. In classes these are named: `gap-md`, `px-lg`. */
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 } as const;
 
 /** Font sizes and line heights, in points. Text scales with the user's font-size setting on top of these. */

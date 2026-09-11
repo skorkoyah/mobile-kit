@@ -34,7 +34,7 @@ npx create-expo-app day-07-flash --template https://github.com/skorkoyah/mobile-
 | `app/index.tsx` | The welcome screen (the hot-reload test). Replace it with your app's first screen. |
 | `app/gallery.tsx` | A living style guide: one of every primitive, in both themes. |
 | `components/ui/` | The primitives: `Screen`, `T` (text), `Button`, `Input`, `Row`, `Card`, `Press`, `Skeleton`, `EmptyState`, `ErrorBanner`, `Sheet`. |
-| `constants/tokens.cjs` + `tokens.ts` | The look, defined once: colors and radius in `tokens.cjs` (Tailwind and the CSS variables are generated from it by `npm run tokens:sync`), type/spacing/motion in `tokens.ts`. Colors are CSS variables, so every class is right in light and dark mode without `dark:` twins. |
+| `constants/tokens.cjs` + `tokens.ts` | The look, defined once: colors, radius and spacing in `tokens.cjs` (Tailwind classes, the CSS variables in `global.css`, and the native colors in `app.json` are all generated from or checked against it by `npm run tokens:sync`); type and motion in `tokens.ts`. Colors are CSS variables, so every class is right in light and dark mode without `dark:` twins, and spacing is named: `gap-md`, `px-lg`, `py-sm`. |
 | `lib/haptics.ts` | The only file that talks to the haptics library. |
 | `lib/storage.ts` | `storage` (plain, AsyncStorage) and `secrets` (keychain, SecureStore). Tokens never go in `storage`. |
 | `lib/store.ts` | `createPersistedStore`: a Zustand store that saves to disk and reports when it has loaded. |

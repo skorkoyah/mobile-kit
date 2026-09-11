@@ -1,19 +1,24 @@
-// 1) Regenerates global.css (CSS variables for light + dark) from constants/tokens.cjs.
-// 2) Verifies constants/tokens.ts carries the same palette and radius, so useColors() and Tailwind never disagree.
-// Run: npm run tokens:sync  (also runs before typecheck)
+// One command keeps the whole design system honest:
+//  1) regenerates global.css (CSS variables for light + dark) from constants/tokens.cjs,
+//  2) verifies constants/tokens.ts carries the same palette, radius and spacing,
+//  3) verifies app.json's native splash and background colors still match the palette
+//     (those live in the native build and cannot read CSS variables).
+// Run: npm run tokens:sync  (runs automatically before `npm run typecheck`)
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
-const { palette, radius } = require(here('../constants/tokens.cjs'));
+const { palette, radius, spacing } = require(here('../constants/tokens.cjs'));
 
 const kebab = (s) => s.replace(/([A-Z])/g, '-$1').toLowerCase();
 const rgb = (hex) => hex.replace('#', '').match(/.{2}/g).map((h) => parseInt(h, 16)).join(' ');
 const vars = (theme) => Object.entries(palette[theme]).map(([k, v]) => `    --color-${kebab(k)}: ${rgb(v)};`).join('\n');
 
-const css = `@tailwind base;
+writeFileSync(
+  here('../global.css'),
+  `@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -28,22 +33,44 @@ ${vars('dark')}
     }
   }
 }
-`;
-writeFileSync(here('../global.css'), css);
+`,
+);
 
-const ts = readFileSync(here('../constants/tokens.ts'), 'utf8');
 let bad = 0;
+const fail = (msg) => { console.error(msg); bad++; };
+
+// tokens.ts must mirror tokens.cjs
+const ts = readFileSync(here('../constants/tokens.ts'), 'utf8');
+const block = (marker, end = '},') => {
+  const start = ts.indexOf(marker);
+  return start === -1 ? '' : ts.slice(start, ts.indexOf(end, start));
+};
 for (const theme of ['light', 'dark']) {
-  const start = ts.indexOf(`${theme}: {`);
-  const block = ts.slice(start, ts.indexOf('},', start));
+  const b = block(`${theme}: {`);
   for (const [k, v] of Object.entries(palette[theme])) {
-    if (!new RegExp(`\\b${k}:\\s*'${v}'`).test(block)) { console.error(`tokens.ts drift: ${theme}.${k} should be ${v}`); bad++; }
+    if (!new RegExp(`\\b${k}:\\s*'${v}'`).test(b)) fail(`tokens.ts drift: ${theme}.${k} should be ${v}`);
   }
 }
-const rStart = ts.indexOf('radius = {');
-const rBlock = ts.slice(rStart, ts.indexOf('}', rStart));
-for (const [k, v] of Object.entries(radius)) {
-  if (!new RegExp(`\\b${k}:\\s*${v}\\b`).test(rBlock)) { console.error(`tokens.ts drift: radius.${k} should be ${v}`); bad++; }
+for (const [name, obj] of [['radius', radius], ['spacing', spacing]]) {
+  const b = block(`${name} = {`, '}');
+  for (const [k, v] of Object.entries(obj)) {
+    if (!new RegExp(`\\b${k}:\\s*${v}\\b`).test(b)) fail(`tokens.ts drift: ${name}.${k} should be ${v}`);
+  }
 }
+
+// app.json's native colors must match the palette (the splash screen cannot read CSS variables)
+const app = JSON.parse(readFileSync(here('../app.json'), 'utf8')).expo;
+const splash = app.plugins.find((p) => Array.isArray(p) && p[0] === 'expo-splash-screen')?.[1] ?? {};
+const checks = [
+  ['splash backgroundColor', splash.backgroundColor, palette.light.background],
+  ['splash dark backgroundColor', splash.dark?.backgroundColor, palette.dark.background],
+  ['android adaptiveIcon backgroundColor', app.android?.adaptiveIcon?.backgroundColor, palette.light.background],
+  ['notification icon color', app.plugins.find((p) => Array.isArray(p) && p[0] === 'expo-notifications')?.[1]?.color, palette.light.accent],
+  ['app backgroundColor', app.backgroundColor, palette.light.background],
+];
+for (const [what, got, want] of checks) {
+  if ((got ?? '').toUpperCase() !== want.toUpperCase()) fail(`app.json drift: ${what} is ${got}, should be ${want}`);
+}
+
 if (bad) process.exit(1);
-console.log('global.css regenerated; tokens.ts matches tokens.cjs');
+console.log('global.css regenerated; tokens.ts and app.json match tokens.cjs');

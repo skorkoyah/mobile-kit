@@ -18,13 +18,13 @@ type Props = TextInputProps & {
 export function Input({ label, hint, error, className = '', style, ...rest }: Props) {
   const colors = useColors();
   return (
-    <View className="gap-1.5">
+    <View className="gap-xs">
       <T variant="small" tone="ink2" className="font-semibold">{label}</T>
       <TextInput
         accessibilityLabel={label}
         accessibilityHint={error ?? hint}
         placeholderTextColor={colors.muted}
-        className={`min-h-[48px] rounded-md px-4 bg-surface text-ink border ${error ? 'border-danger' : 'border-border'} ${className}`}
+        className={`min-h-[48px] rounded-md px-md bg-surface text-ink border ${error ? 'border-danger' : 'border-border'} ${className}`}
         style={[{ fontSize: type.body.size }, style]}
         {...rest}
       />

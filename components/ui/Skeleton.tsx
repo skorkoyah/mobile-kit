@@ -40,7 +40,7 @@ export function ListSkeleton({ rows = 5 }: { rows?: number }) {
   return (
     <View accessibilityLabel="Loading" accessibilityRole="progressbar" accessible>
       {Array.from({ length: rows }).map((_, i) => (
-        <View key={i} className="py-3 gap-2 border-b border-border">
+        <View key={i} className="py-md gap-sm border-b border-border">
           <Skeleton width="60%" height={18} />
           <Skeleton width="40%" height={14} />
         </View>
