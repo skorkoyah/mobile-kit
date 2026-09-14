@@ -15,6 +15,8 @@ type Props = {
   loading?: boolean;
   /** 'tap' (default) · 'select' · 'confirm' · 'success' · 'error' · 'impact' · false for silent. */
   haptic?: HapticName | false;
+  /** What a screen reader says, when the visible label carries a symbol that wouldn't read well. */
+  accessibilityLabel?: string;
   accessibilityHint?: string;
   className?: string;
 };
@@ -31,7 +33,7 @@ const labels = { primary: 'onAccent', secondary: 'accent', ghost: 'ink', danger:
  * Every button in the Kit: spring press, screen-reader role, 52pt minimum touch target, and
  * exactly ONE buzz per press — the button owns its haptic, so a caller never stacks a second one.
  */
-export function Button({ title, onPress, variant = 'primary', disabled, loading, haptic = 'tap', accessibilityHint, className = '' }: Props) {
+export function Button({ title, onPress, variant = 'primary', disabled, loading, haptic = 'tap', accessibilityLabel, accessibilityHint, className = '' }: Props) {
   const colors = useColors();
   const isOff = disabled || loading;
   return (
@@ -43,7 +45,7 @@ export function Button({ title, onPress, variant = 'primary', disabled, loading,
       haptic={false}
       disabled={isOff}
       accessibilityRole="button"
-      accessibilityLabel={title}
+      accessibilityLabel={accessibilityLabel ?? title}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: !!isOff, busy: !!loading }}
       style={{ opacity: isOff ? 0.6 : 1 }}
