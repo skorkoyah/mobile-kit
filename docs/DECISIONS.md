@@ -22,6 +22,13 @@ Each entry: what we chose, and why. Newest at the bottom.
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
   token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+- **The sheet's dim area and panel do not overlap.** They are stacked in a plain column, so the dim
+  ends exactly where the panel begins. A full-screen backdrop layered behind the panel is the obvious
+  way to build this and it worked on iOS while repeatedly failing on Android, where it swallowed taps
+  meant for the panel's buttons. Elevation, zIndex and pointerEvents were each tried and none of them
+  settled it. Geometry settles it: with no overlap there is no stacking left to get wrong. **When a
+  layered layout misbehaves on one platform, prefer removing the overlap over winning the z-order
+  argument.**
 - **No `statusBarTranslucent` on the sheet's Modal.** On Android it changes the Modal window's
   insets, and after the Modal closes the screen underneath can draw in one coordinate space while
   receiving touches in another. The symptom is a control near the top of the screen that looks
