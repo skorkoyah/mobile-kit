@@ -22,6 +22,13 @@ Each entry: what we chose, and why. Newest at the bottom.
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
   token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+- **Never put a translate-based entering animation on anything containing a control.** On Android a
+  view moved by a transform keeps receiving touches at the position it started from. A Reanimated
+  `SlideInDown` on the sheet's panel meant it drew at the bottom of the screen and listened from off
+  the bottom edge, so its buttons were completely dead while the sheet looked perfect. This is the
+  same failure as animating layout, from the opposite direction, and the general rule covers both:
+  **if people have to hit it, do not animate its position yourself.** The sheet now slides with the
+  Modal's own native animation, which moves the window rather than the view.
 - **The sheet's dim area and panel do not overlap.** They are stacked in a plain column, so the dim
   ends exactly where the panel begins. A full-screen backdrop layered behind the panel is the obvious
   way to build this and it worked on iOS while repeatedly failing on Android, where it swallowed taps

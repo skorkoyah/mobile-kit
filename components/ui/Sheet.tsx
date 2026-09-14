@@ -1,13 +1,10 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { Keyboard, Modal, Platform, Pressable, View } from 'react-native';
-import Animated, { FadeIn, ReduceMotion, SlideInDown } from 'react-native-reanimated';
 import { T } from './Text';
-import { motion, radius } from '@/constants/tokens';
+import { radius } from '@/constants/tokens';
 import { useColors } from '@/lib/theme';
 
 type Props = { visible: boolean; onClose: () => void; title?: string; children: ReactNode };
-
-const slide = SlideInDown.springify().damping(motion.snappy.damping).stiffness(motion.snappy.stiffness).reduceMotion(ReduceMotion.System);
 
 /**
  * How far the keyboard covers the screen, as ordinary React state — never an animated value.
@@ -38,52 +35,52 @@ function useKeyboardHeight(enabled: boolean) {
 /**
  * A bottom sheet that slides up. Tap the dim area, the system back gesture, or the screen-reader
  * escape gesture to close. Safe to put an Input inside: the panel sits above the keyboard.
- * The contents only exist while open, so the slide-up replays every time.
+ * The contents only exist while open, so the slide replays every time.
  *
- * **Nothing here overlaps anything.** The dim area and the panel are stacked in a plain column, so
- * the dim area genuinely ends where the panel begins. That is deliberate and it is the whole design:
- * a full-screen backdrop layered behind the panel works on iOS and repeatedly did not on Android,
- * where it kept swallowing taps meant for the buttons. Elevation, zIndex and pointerEvents were all
- * tried against that and none of them settled it. Geometry settles it — there is no stacking left to
- * get wrong, on either platform.
+ * **There is no Reanimated in here, on purpose.** The slide is the Modal's own native animation.
+ * A Reanimated entering animation moves a view with a transform, and on Android a transformed view
+ * still receives touches at the position it started from — for a slide-up that is off the bottom of
+ * the screen. The panel drew exactly where you saw it and listened somewhere else entirely, so its
+ * buttons were dead while everything looked perfect. The native animation moves the window, not the
+ * view, so there is nothing to desynchronise.
  *
- * The keyboard is a spacer below the panel for the same reason: plain layout, so what you see and
- * what you can touch are the same thing.
+ * Nothing here overlaps anything either: the dim area and the panel are stacked in a plain column,
+ * so there is no z-order to get wrong. Both decisions are in docs/DECISIONS.md.
  *
- * Colours come through `style` — a Reanimated view ignores `className`. See docs/DECISIONS.md.
+ * Colours come through `style` — the Kit only puts `className` on core components.
  */
 export function Sheet({ visible, onClose, title, children }: Props) {
   const colors = useColors();
   const keyboardHeight = useKeyboardHeight(visible);
 
   return (
-    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
-      {visible ? (
-        <View style={{ flex: 1 }}>
-          <Animated.View entering={FadeIn.duration(150)} style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' }}>
-            <Pressable style={{ flex: 1 }} onPress={onClose} accessibilityLabel="Close" accessibilityRole="button" />
-          </Animated.View>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <View style={{ flex: 1 }}>
+        <Pressable
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' }}
+          onPress={onClose}
+          accessibilityLabel="Close"
+          accessibilityRole="button"
+        />
 
-          <Animated.View
-            entering={slide}
-            accessibilityViewIsModal
-            onAccessibilityEscape={onClose}
-            style={{
-              backgroundColor: colors.surface,
-              borderTopLeftRadius: radius.lg,
-              borderTopRightRadius: radius.lg,
-            }}
-          >
-            <View className="px-lg pt-sm pb-xxl">
-              <View className="self-center w-10 h-1 rounded-full bg-border mb-md" accessible={false} importantForAccessibility="no" />
-              {title ? <T variant="heading" className="mb-md">{title}</T> : null}
-              {children}
-            </View>
-          </Animated.View>
-
-          {keyboardHeight > 0 ? <View style={{ height: keyboardHeight, backgroundColor: colors.surface }} /> : null}
+        <View
+          accessibilityViewIsModal
+          onAccessibilityEscape={onClose}
+          style={{
+            backgroundColor: colors.surface,
+            borderTopLeftRadius: radius.lg,
+            borderTopRightRadius: radius.lg,
+          }}
+        >
+          <View className="px-lg pt-sm pb-xxl">
+            <View className="self-center w-10 h-1 rounded-full bg-border mb-md" accessible={false} importantForAccessibility="no" />
+            {title ? <T variant="heading" className="mb-md">{title}</T> : null}
+            {children}
+          </View>
         </View>
-      ) : null}
+
+        {keyboardHeight > 0 ? <View style={{ height: keyboardHeight, backgroundColor: colors.surface }} /> : null}
+      </View>
     </Modal>
   );
 }
