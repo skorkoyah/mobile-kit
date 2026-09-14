@@ -52,6 +52,10 @@ function useKeyboardHeight(enabled: boolean) {
  *  - the keyboard gap is padding on the outer container: plain layout, nothing animated, nothing
  *    delegated to a keyboard-avoiding view. A Modal is its own native window, so it never gets
  *    resized and a keyboard-avoiding view cannot help it.
+ *  - there is no `statusBarTranslucent`. On Android that flag changes the Modal window's insets, and
+ *    after the Modal closes the app underneath can keep drawing in one coordinate space while
+ *    receiving touches in another — controls near the top stop responding even though they look
+ *    fine and their neighbours still work.
  *
  * Colours come through `style` — a Reanimated view ignores `className`. See docs/DECISIONS.md.
  */
@@ -60,7 +64,7 @@ export function Sheet({ visible, onClose, title, children }: Props) {
   const keyboardHeight = useKeyboardHeight(visible);
 
   return (
-    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose} statusBarTranslucent>
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       {visible ? (
         <View style={{ flex: 1, justifyContent: 'flex-end', paddingBottom: keyboardHeight }}>
           <Animated.View entering={FadeIn.duration(150)} style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.4)' }]}>

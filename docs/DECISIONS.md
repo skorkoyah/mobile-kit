@@ -22,6 +22,10 @@ Each entry: what we chose, and why. Newest at the bottom.
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
   token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+- **No `statusBarTranslucent` on the sheet's Modal.** On Android it changes the Modal window's
+  insets, and after the Modal closes the screen underneath can draw in one coordinate space while
+  receiving touches in another. The symptom is a control near the top of the screen that looks
+  perfectly normal and simply stops responding, while a control beside it still works.
 - **The sheet's keyboard gap is plain layout, never an animated style.** Animating a layout property
   like margin on the UI thread moves what you see without moving what you can touch: on Android the
   panel rendered above the keyboard while its buttons stayed registered at the bottom of the screen,
