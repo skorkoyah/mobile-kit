@@ -22,6 +22,11 @@ Each entry: what we chose, and why. Newest at the bottom.
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
   token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+- **The Kit's entrance animation fades and never slides.** Same reason as below, applied
+  structurally: `enter()` used to be a fade-and-rise, which meant every `Card` translated — and the
+  gallery puts buttons inside cards. Those buttons were one device test away from being dead on
+  Android for exactly the reason the sheet's were. Making the shared helper opacity-only removes the
+  hazard everywhere at once instead of relying on anyone remembering the rule.
 - **Never put a translate-based entering animation on anything containing a control.** On Android a
   view moved by a transform keeps receiving touches at the position it started from. A Reanimated
   `SlideInDown` on the sheet's panel meant it drew at the bottom of the screen and listened from off

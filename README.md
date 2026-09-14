@@ -53,7 +53,7 @@ Every screen gets five things for free, and a screen isn't done until it has all
 2. **Loading shows skeletons, not spinners.** `Skeleton` and `ListSkeleton`.
 3. **Empty screens guide the next step.** `EmptyState` with one action.
 4. **Every tap responds with spring physics and exactly one haptic.** `Press`, used by `Button` and `Row`. A button says which buzz it means (`haptic="confirm"`), and never fires two.
-5. **Content enters with motion, and respects reduce-motion.** `Card`, `Sheet`, `enter()`.
+5. **Content enters with motion, and respects reduce-motion.** `Card`, `Sheet`, `enter()`. The entrance is a fade, never a slide: on Android a view moved by a transform still receives touches where it started, so anything tappable inside it goes dead.
 
 Plus: dark mode follows the phone, text scales with the user's font-size setting, headings announce as headings, and every control has a screen-reader label.
 
