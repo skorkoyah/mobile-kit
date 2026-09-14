@@ -40,7 +40,6 @@ npx create-expo-app day-07-flash --template https://github.com/skorkoyah/mobile-
 | `lib/store.ts` | `createPersistedStore`: a Zustand store that saves to disk and reports when it has loaded. |
 | `lib/motion.ts` | The standard enter animation and the reduce-motion hook. |
 | `lib/theme.ts` | `useColors()` for the few places `className` can't reach (icon colors, native props) and `useNavigationTheme()` for headers and tabs. |
-| `lib/nativewind.ts` | Teaches NativeWind about `Animated.View` and the keyboard-aware scroll view. |
 | `app.json` | Shared phase identifier, purpose strings, plugins. Submission apps rewrite this. |
 | `eas.json` | `development` / `preview` / `production` build profiles. |
 | `docs/DECISIONS.md` | Why each choice was made. |
@@ -59,7 +58,7 @@ Plus: dark mode follows the phone, text scales with the user's font-size setting
 
 ## Scripts
 
-`npm start` (dev client) · `npm run typecheck` (runs the token sync and the animated-className guard first) · `npm run guard` · `npm run tokens:sync` · `npm run doctor` · `npm run build:dev`
+`npm start` (dev client) · `npm run typecheck` (runs the token sync, the className guard and the contrast check first) · `npm run guard` · `npm run tokens:sync` · `npm run doctor` · `npm run build:dev`
 
 ## Versions
 

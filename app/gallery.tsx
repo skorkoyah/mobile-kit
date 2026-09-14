@@ -59,7 +59,7 @@ export default function Gallery() {
       </Card>
 
       <Sheet visible={sheet} onClose={() => setSheet(false)} title="A bottom sheet">
-        <T variant="body" tone="ink2" className="mb-md">Slides up with a spring, respects reduce-motion, closes on tap outside, and keeps inputs above the keyboard.</T>
+        <T variant="body" tone="ink2" className="mb-md">Slides up, closes on tap outside or the back gesture, and sits above the keyboard.</T>
         <Button title="Done" haptic="success" onPress={() => setSheet(false)} />
       </Sheet>
     </Screen>

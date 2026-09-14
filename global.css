@@ -11,13 +11,13 @@
     --color-ink2: 74 82 98;
     --color-muted: 102 112 127;
     --color-border: 217 221 214;
-    --color-accent: 27 138 100;
+    --color-accent: 24 128 96;
     --color-accent-ink: 15 92 67;
     --color-accent-soft: 221 241 231;
     --color-on-accent: 255 255 255;
     --color-danger: 185 53 53;
     --color-danger-soft: 249 226 226;
-    --color-warn: 166 95 12;
+    --color-warn: 156 89 11;
     --color-warn-soft: 251 235 211;
     --color-skeleton: 228 231 226;
   }

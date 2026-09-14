@@ -5,8 +5,8 @@ module.exports = {
   palette: {
     light: {
       background: '#F6F7F4', surface: '#FFFFFF', ink: '#1A1E27', ink2: '#4A5262', muted: '#66707F',
-      border: '#D9DDD6', accent: '#1B8A64', accentInk: '#0F5C43', accentSoft: '#DDF1E7', onAccent: '#FFFFFF',
-      danger: '#B93535', dangerSoft: '#F9E2E2', warn: '#A65F0C', warnSoft: '#FBEBD3', skeleton: '#E4E7E2',
+      border: '#D9DDD6', accent: '#188060', accentInk: '#0F5C43', accentSoft: '#DDF1E7', onAccent: '#FFFFFF',
+      danger: '#B93535', dangerSoft: '#F9E2E2', warn: '#9C590B', warnSoft: '#FBEBD3', skeleton: '#E4E7E2',
     },
     dark: {
       background: '#151821', surface: '#1D2130', ink: '#ECEEF2', ink2: '#B9BFCB', muted: '#98A0B0',

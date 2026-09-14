@@ -8,7 +8,6 @@ Each entry: what we chose, and why. Newest at the bottom.
 - **Reanimated for press physics and motion, not a dedicated animation or pressable library.** Reanimated is the de-facto standard with the largest community, runs animations on the UI thread, and is a peer of Expo Router already. Two fewer niche native modules for beginners to be broken by. `Press` (~50 lines) gives the same spring feel.
 - **Colors are CSS variables, generated from one file.** `constants/tokens.cjs` is the source; `npm run tokens:sync` writes `global.css` (light values under `:root`, dark values under `prefers-color-scheme: dark`) and checks `constants/tokens.ts` matches. So `bg-surface` is right in both themes on its own, and nobody has to remember a `dark:` twin. That removes the single most common dark-mode bug before Day 9 teaches dark mode.
 - **NativeWind 4 with Tailwind 3.4** (Tailwind 4 is not supported by NativeWind 4). Tailwind and `babel-preset-expo` are explicit devDependencies so `npm install` resolves them at the root; npm otherwise nests the preset under `expo/` and a custom `babel.config.js` fails at bundle time with an Expo Router error about `EXPO_ROUTER_APP_ROOT`.
-- **NativeWind is taught about the two non-core components the Kit styles** (`Animated.View`, `KeyboardAwareScrollView` with its content container) in `lib/nativewind.ts`. Without that, `className` on them typechecks and silently does nothing.
 - **Spacing is named, not numeric.** `gap-md` and `px-lg` come from one scale in `tokens.cjs`, so tightening the whole app's rhythm is one edit. Tailwind's numeric classes still work (the scale is added, not replaced), so an agent writing `px-4` is not broken; the Kit's own components use the names.
 - **`tokens:sync` also guards the native colors.** The splash screen, adaptive icon, and notification tint live in `app.json` and cannot read CSS variables, so the script fails if they drift from the palette.
 - **The Sheet's contents only exist while it is open.** React Native's `Modal` can keep hidden children mounted, which would make the slide-up animation play once and never again; rendering the contents conditionally guarantees it replays each time.
@@ -21,7 +20,7 @@ Each entry: what we chose, and why. Newest at the bottom.
   looking at a real phone, after typecheck, expo-doctor, the bundler and three independent reviews all
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
-  token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+  token values.** `npm run guard` fails the build if a `className` appears on any component that drops it — animated views, lists, keyboard views, Skia canvases — and it scans whole JSX tags, because the first version matched line by line and missed the multi-line formatting that every code formatter produces.
 - **The Kit's entrance animation fades and never slides.** Same reason as below, applied
   structurally: `enter()` used to be a fade-and-rise, which meant every `Card` translated — and the
   gallery puts buttons inside cards. Those buttons were one device test away from being dead on
@@ -56,17 +55,13 @@ Each entry: what we chose, and why. Newest at the bottom.
   see what you were typing; on iOS it re-measured in a loop and the panel visibly bounced before
   settling. The `Sheet` now listens to the keyboard directly and lifts itself, which behaves the same
   on both. The keyboard-aware scroll view stays the right tool for an ordinary screen.
-- **The `Sheet` panel carries `elevation`, not just `zIndex`.** Android stacks by elevation, so a
-  full-screen backdrop drawn earlier can sit on top of a later sibling and swallow its taps: the sheet
-  closes and the button you pressed never runs. Reset worked on iPhone and did nothing on Android
-  until the panel got an elevation. Its keyboard wrapper is also `pointerEvents="box-none"` so taps
-  reach the backdrop through its empty area, and `behavior="padding"` is iOS-only because Android
-  resizes its own window.
+- **Superseded: the `Sheet` once carried `elevation` and `pointerEvents` to win a z-order argument on Android.** None of that is in the code any more and none of it was the real cause — the panel's entering animation was. Kept here only so the trail of wrong fixes is legible: elevation, zIndex, pointerEvents and removing the backdrop overlap were each tried and each failed. See the two rules above for what actually holds.
+
 - **`Press` is a plain `Pressable` on the outside, animated on the inside**, so `className` sizes the real touch target. The first version wrapped an inner animated view, so `<Press className="flex-1">` stretched the *inside* while the actual touchable shrank to fit its content — an app asking for "the whole screen is one giant tap target" silently got a tap target the size of its text. Found when a coding agent, given only the Kit and a prompt, reported it could not make `Press` fill the screen and wrote its own pressable instead. If a primitive is hard to use correctly, that is the primitive's bug.
 - **A button owns its buzz.** `Button` takes `haptic="confirm"` (or `select`, `success`, `error`, `impact`, or `false`) and suppresses the automatic tap underneath, so a press is always exactly one buzz. The first version let callers fire a second haptic on top of the automatic one, which turned every "firmer buzz" into two buzzes in a row — found on Day 1.
 - **`expo-haptics` behind `lib/haptics.ts`.** Simple, stable, swappable in one file. Every `Press` fires the light tap.
 - **Text never disables font scaling.** Dynamic Type is an accessibility promise; `maxFontSizeMultiplier` caps layout damage at 1.6×. Headings announce as headings.
-- **Contrast is checked at token time.** Light `muted` and the on-accent text color were chosen to pass 4.5:1 on their backgrounds in both themes (dark ink on the dark-mode accent, not white).
+- **Contrast is checked by a script, not by assertion.** `npm run guard` computes the WCAG ratio for every colour pair the Kit actually renders, in both themes, and fails the build below 4.5:1. This replaces an earlier claim that contrast "was checked" — it had not been, and the primary button's white-on-green sat at 4.32:1 for days while the log said otherwise. A claim nobody can verify is worse than no claim. Add a pair to `scripts/contrast-check.mjs` whenever a component renders a new combination.
 - **The Kit's EAS project ID is committed in `app.json`.** Every clone re-links with `eas init --force`, the standard flow for any cloned Expo repo; keeping the ID out would force an `app.config.js` that `eas init` cannot edit for students.
 - **`createPersistedStore` takes a function that returns only your own fields.** The first version typed it as returning the whole store including `hydrated`, so every app that used it failed to compile until the author added a field the helper is supposed to add itself. Found on Day 1, the first real use. Zustand's `StateCreator<T & Hydrated, [], [], T>` says "`set`/`get` see everything, the function returns `T`", which is what a caller expects.
 - **The welcome screen is the Day 0 hot-reload test** and the gallery is Day 1's tour, so the Kit teaches itself.
