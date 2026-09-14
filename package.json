@@ -55,7 +55,7 @@
     "doctor": "npx expo-doctor",
     "build:dev": "eas build --profile development",
     "tokens:sync": "node scripts/tokens-sync.mjs",
-    "pretypecheck": null,
+    "pretypecheck": "node scripts/tokens-sync.mjs && node scripts/no-animated-classname.mjs && node scripts/contrast-check.mjs",
     "guard": "node scripts/no-animated-classname.mjs && node scripts/contrast-check.mjs"
   },
   "private": true
