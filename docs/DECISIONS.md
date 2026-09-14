@@ -22,6 +22,12 @@ Each entry: what we chose, and why. Newest at the bottom.
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
   token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+- **The sheet's keyboard gap is plain layout, never an animated style.** Animating a layout property
+  like margin on the UI thread moves what you see without moving what you can touch: on Android the
+  panel rendered above the keyboard while its buttons stayed registered at the bottom of the screen,
+  so Reset silently did nothing. Ordinary React state means an ordinary layout pass, and a layout pass
+  always agrees with itself. Animate transforms and opacity; never animate layout on something people
+  have to hit.
 - **A keyboard-aware scroll view does not belong inside a Modal.** A Modal is its own native window.
   On Android it never gets resized, so the sheet's panel sat buried under the keyboard with no way to
   see what you were typing; on iOS it re-measured in a loop and the panel visibly bounced before
