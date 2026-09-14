@@ -9,6 +9,7 @@ KIT CONTEXT:
 - Tailwind classes only work on core React Native components (View, Text, Pressable, ScrollView, TextInput). An animated view ignores className silently, so style animated elements with the style prop using the Kit's tokens and useColors(). The Kit's own components already do this: className on the Kit's Press sizes the real touch target.
 - Colors are Tailwind classes backed by CSS variables (bg-surface, text-ink, border-border, bg-accent…) and are automatically correct in light and dark mode: never write dark: variants and never hardcode a color in a screen. For native props that need a color value, use useColors().
 - Storage: plain app data through the Kit's storage helper or createPersistedStore; anything secret through the secrets helper. Never a token in plain storage.
+- Where things live: this app's own state goes in a store/ folder (store/<feature>.ts), its screen text in content/<feature>.ts, and its screens in app/. lib/ and components/ are the Kit's, not the app's — read them, don't add to them.
 - Testing target is a development build on a physical phone, not Expo Go.
 - Never add a native package: the Kit already contains every native module this phase needs, and adding one would force a rebuild. Pure-JavaScript packages may be proposed, listed first, and added only after I confirm.
 - After every change, tell me what you changed and why, in plain words.
