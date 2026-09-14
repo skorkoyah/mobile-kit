@@ -25,6 +25,7 @@
     "expo-splash-screen": "~57.0.8",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.3",
+    "expo-updates": "~57.0.22",
     "nativewind": "^4.2.6",
     "react": "19.2.3",
     "react-dom": "^19.2.3",
@@ -54,7 +55,8 @@
     "doctor": "npx expo-doctor",
     "build:dev": "eas build --profile development",
     "tokens:sync": "node scripts/tokens-sync.mjs",
-    "pretypecheck": "node scripts/tokens-sync.mjs"
+    "pretypecheck": "node scripts/tokens-sync.mjs && node scripts/no-animated-classname.mjs",
+    "guard": "node scripts/no-animated-classname.mjs"
   },
   "private": true
 }

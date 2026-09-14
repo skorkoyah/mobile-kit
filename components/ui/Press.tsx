@@ -5,14 +5,6 @@ import { motion } from '@/constants/tokens';
 import { haptics } from '@/lib/haptics';
 import { useReducedMotion } from '@/lib/motion';
 
-/**
- * The touchable itself is the animated element, so `className` sets BOTH the layout of the real
- * touch target and the thing that springs. `<Press className="flex-1">` really does make the whole
- * area tappable — an earlier version put the class on an inner view, so the touch target quietly
- * shrank to fit its content.
- */
-export const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 type Props = Omit<PressableProps, 'style' | 'children'> & {
   children: ReactNode;
   /** 'scale' shrinks slightly (buttons, cards, rows); 'opacity' dims (icon and secondary actions). */
@@ -27,9 +19,11 @@ const spring = { damping: motion.press.damping, stiffness: motion.press.stiffnes
 
 /**
  * The one pressable in the Kit. Every button, row, and card uses it, so every tap in every app
- * responds with the same spring physics and the same light haptic. The animation runs on the UI
- * thread (Reanimated), so it stays smooth even while JavaScript is busy. Under reduce-motion the
- * press still gives feedback, without the spring.
+ * responds with the same spring physics and the same light haptic.
+ *
+ * The touchable is a plain React Native Pressable, so `className` sizes the REAL touch target:
+ * `<Press className="flex-1">` genuinely makes the whole area tappable. The animation lives on an
+ * inner view that carries no className — see the note about Reanimated in docs/DECISIONS.md.
  */
 export function Press({ children, feedback = 'scale', haptic = true, onPressIn, onPressOut, onPress, style, className, ...rest }: Props) {
   const pressed = useSharedValue(0);
@@ -52,15 +46,15 @@ export function Press({ children, feedback = 'scale', haptic = true, onPressIn, 
   const handlePress = useCallback<NonNullable<PressableProps['onPress']>>((e) => { if (haptic) haptics.tap(); onPress?.(e); }, [haptic, onPress]);
 
   return (
-    <AnimatedPressable
+    <Pressable
+      className={className}
+      style={style}
       onPressIn={handleIn}
       onPressOut={handleOut}
       onPress={handlePress}
-      style={[animatedStyle, style]}
-      className={className}
       {...rest}
     >
-      {children}
-    </AnimatedPressable>
+      <Animated.View style={animatedStyle}>{children}</Animated.View>
+    </Pressable>
   );
 }

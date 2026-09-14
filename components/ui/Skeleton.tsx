@@ -1,17 +1,19 @@
 import { useEffect } from 'react';
-import { type DimensionValue, View } from 'react-native';
+import { type DimensionValue, View, type ViewStyle } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
+import { useColors } from '@/lib/theme';
 
-type Props = { width?: DimensionValue; height?: number; radius?: number; className?: string };
+type Props = { width?: DimensionValue; height?: number; radius?: number; style?: ViewStyle };
 
 /**
  * A grey block shaped like the content that is loading. Pulses 0.4 → 1 → 0.4 on the UI thread.
  * Hidden from screen readers; the container that groups skeletons announces "Loading" once.
- * Compose screen-specific skeletons from several of these; never show a bare spinner.
+ * Colours come through `style` rather than `className`, because this is a Reanimated view.
  */
-export function Skeleton({ width = '100%', height = 16, radius = 8, className = '' }: Props) {
+export function Skeleton({ width = '100%', height = 16, radius = 8, style }: Props) {
   const reduced = useReducedMotion();
+  const colors = useColors();
   const opacity = useSharedValue(reduced ? 0.6 : 0.4);
 
   useEffect(() => {
@@ -23,12 +25,11 @@ export function Skeleton({ width = '100%', height = 16, radius = 8, className = 
     return () => cancelAnimation(opacity);
   }, [opacity, reduced]);
 
-  const style = useAnimatedStyle(() => ({ opacity: opacity.value }));
+  const animated = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   return (
     <Animated.View
-      style={[style, { width, height, borderRadius: radius }]}
-      className={`bg-skeleton ${className}`}
+      style={[animated, { width, height, borderRadius: radius, backgroundColor: colors.skeleton }, style]}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
     />

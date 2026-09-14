@@ -59,7 +59,7 @@ Plus: dark mode follows the phone, text scales with the user's font-size setting
 
 ## Scripts
 
-`npm start` (dev client) · `npm run typecheck` (runs the token sync first) · `npm run tokens:sync` · `npm run doctor` · `npm run build:dev`
+`npm start` (dev client) · `npm run typecheck` (runs the token sync and the animated-className guard first) · `npm run guard` · `npm run tokens:sync` · `npm run doctor` · `npm run build:dev`
 
 ## Versions
 
