@@ -22,6 +22,12 @@ Each entry: what we chose, and why. Newest at the bottom.
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
   token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+- **The `Sheet` panel carries `elevation`, not just `zIndex`.** Android stacks by elevation, so a
+  full-screen backdrop drawn earlier can sit on top of a later sibling and swallow its taps: the sheet
+  closes and the button you pressed never runs. Reset worked on iPhone and did nothing on Android
+  until the panel got an elevation. Its keyboard wrapper is also `pointerEvents="box-none"` so taps
+  reach the backdrop through its empty area, and `behavior="padding"` is iOS-only because Android
+  resizes its own window.
 - **`Press` is a plain `Pressable` on the outside, animated on the inside**, so `className` sizes the real touch target. The first version wrapped an inner animated view, so `<Press className="flex-1">` stretched the *inside* while the actual touchable shrank to fit its content — an app asking for "the whole screen is one giant tap target" silently got a tap target the size of its text. Found when a coding agent, given only the Kit and a prompt, reported it could not make `Press` fill the screen and wrote its own pressable instead. If a primitive is hard to use correctly, that is the primitive's bug.
 - **A button owns its buzz.** `Button` takes `haptic="confirm"` (or `select`, `success`, `error`, `impact`, or `false`) and suppresses the automatic tap underneath, so a press is always exactly one buzz. The first version let callers fire a second haptic on top of the automatic one, which turned every "firmer buzz" into two buzzes in a row — found on Day 1.
 - **`expo-haptics` behind `lib/haptics.ts`.** Simple, stable, swappable in one file. Every `Press` fires the light tap.
