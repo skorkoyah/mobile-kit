@@ -22,6 +22,11 @@ Each entry: what we chose, and why. Newest at the bottom.
   passed on an app whose layout was visibly broken. **The rule: `className` on core React Native
   components only (View, Text, Pressable, ScrollView, TextInput). Animated elements take `style` with
   token values.** `npm run guard` fails the build if a `className` reappears on an animated view.
+- **A keyboard-aware scroll view does not belong inside a Modal.** A Modal is its own native window.
+  On Android it never gets resized, so the sheet's panel sat buried under the keyboard with no way to
+  see what you were typing; on iOS it re-measured in a loop and the panel visibly bounced before
+  settling. The `Sheet` now listens to the keyboard directly and lifts itself, which behaves the same
+  on both. The keyboard-aware scroll view stays the right tool for an ordinary screen.
 - **The `Sheet` panel carries `elevation`, not just `zIndex`.** Android stacks by elevation, so a
   full-screen backdrop drawn earlier can sit on top of a later sibling and swallow its taps: the sheet
   closes and the button you pressed never runs. Reset worked on iPhone and did nothing on Android
